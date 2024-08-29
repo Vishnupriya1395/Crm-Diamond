@@ -1,0 +1,136 @@
+.project-form {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background-color: #e6e6e6;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  position: relative; /* Allow positioning of child elements */
+}
+
+.project-form h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.project-form .member-status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px;
+  font-size: 18px;
+}
+
+.project-form .member-status p {
+  margin: 0;
+  text-align: center;
+  width: 100%;
+  font-size: 18px;
+}
+
+.project-form form {
+  display: flex;
+  flex-direction: column;
+}
+
+.project-form label {
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+.project-form select {
+  padding: 10px;
+  margin-top: 5px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.project-form input[type="text"],
+.project-form input[type="number"],
+.project-form input[type="checkbox"],
+.project-form input[type="file"],
+.project-form input[type="date-local"],
+.project-form input[type="email"],
+.project-form input[type="date"],
+.project-form textarea[name="address"],
+.project-form select[name="projectName"], 
+.project-form select[name="executiveName"], 
+.project-form select[name= "managerName"], 
+.project-form select[name="squareFeet"], 
+.project-form select[name="paymentType"], 
+.project-form select[name="commission"],
+.project-form select[name="state"] {
+  padding: 10px;
+  margin-top: 5px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 18px;
+}
+.project-form input[type="checkbox"] {
+  width: auto;
+  margin-right: 10px;
+}
+
+.project-form fieldset {
+  margin-bottom: 20px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+.project-form legend {
+  padding: 0 10px;
+  font-weight: bold;
+}
+
+.project-form button {
+  padding: 10px 15px;
+  margin-top: 20px;
+  border: none;
+  border-radius: 5px;
+  background-color: #048f24;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-right: 20px;
+}
+
+.project-form button:hover {
+  background-color: #263fe2;
+}
+
+.project-form .error {
+  color: red;
+  margin-top: -10px;
+  margin-bottom: 10px;
+}
+
+.project-form .member-section {
+  display: flex;
+  align-items: center;
+}
+
+.project-form .member-section label {
+  margin-right: 10px;
+}
+
+.project-form textarea {
+  padding: 10px;
+  margin-top: 5px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: 100%;
+  box-sizing: border-box;
+  resize: none; /* Prevents resizing */
+}
+
+

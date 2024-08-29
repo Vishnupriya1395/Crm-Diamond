@@ -1,0 +1,75 @@
+/* src/styles/Login.css */
+
+.login-container {
+  width: 400px;
+  height: 370px;
+  margin: 100px auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  background-color: #f9f9f9;
+  box-shadow: 0px 0px 10px rgba(13, 86, 170, 0.1);
+  margin-top: 0px;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.login-container h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 30px;
+  font-weight:600;
+  font-family: 'Times New Roman', Times, serif;
+
+}
+
+.login-container div {
+  margin-bottom: 15px;
+}
+
+.login-container label {
+  display: block;
+  margin-bottom: 5px;
+  text-align: left;
+  margin-left: 50px;
+  font-size: 20px;
+}
+
+.login-container input
+{
+  width: 300px;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+  margin-bottom: 20px;
+}
+
+.login-container input[type="checkbox"]{
+ margin-left: -290px;
+ width: 120px;
+ height: 20px;
+}
+
+.show-password label{
+  margin-left: 70px;
+  margin-top: -40px;
+}
+
+.login-container button {
+  width: 200px;
+  padding: 10px;
+  background: linear-gradient(to right, #006400, #00FF00);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  align-items: center;
+  font-size: 20px;
+}
+
+.login-container button:hover {
+  background-color: #0056b3;
+}

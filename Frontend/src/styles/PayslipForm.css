@@ -1,0 +1,269 @@
+.payslip-form-container {
+    width: 80%;
+    margin: auto;
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-sizing:  0px 0px 10px 0px rgba(0, 0, 0, 0.1);
+    font-family:Arial, Helvetica, sans-serif;
+    border: solid black;
+    border-width: thin;
+   
+}
+
+.payslip-form-container .header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.payslip-form-container .company-logo {
+    height: 200px;
+    width: 160px;
+    margin-left: 80px;
+    margin-bottom: 130px;
+    margin-top: 10px;
+}
+
+.payslip-form-container .company-details {
+    margin-left: 300px;
+    font-size: 20px;
+    margin-bottom: 80px;
+}
+
+.payslip-form-container .company-details h2 {
+    font-size: 40px;
+    margin-top: 40px;
+    margin-bottom: 0px;
+    font-family:Georgia, 'Times New Roman', Times, serif;
+}
+
+.payslip-form-container .company-details p{
+    font-size: 25px;
+    margin-top: 0px;
+  font-family: 'Times New Roman', Times, serif;
+}
+
+.payslip-form-container h3{
+    font-size: 20px;  
+}
+
+.payslip-form-container .pay-period p{
+    font-size: 40px;
+   text-align: center;
+   margin-bottom: -10px;
+   margin-right: 400px;
+   font-weight: 500;
+}
+
+.payslip-form-container .pay-period label{
+    margin-left: 400px;
+    padding: 10px;
+    font-size: 25px;
+}
+
+.pay-period input[type="date"]
+ {
+    padding-left: 10px;
+    font-size: 20px;
+    margin-top: 50px;
+}
+
+.payslip-form-container .company-details label
+.payslip-form-container .company-details input[type="date"]{
+    margin-right: 30px;
+    margin-top: 30px;
+}
+
+.payslip-form-container p{
+    text-align: justify;
+}
+
+.payslip-form-container .employee-summary {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 50px;
+}
+
+.employee-summary {
+    box-sizing: 10px 10px 10px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 25px;
+    padding: 10px;
+    margin-bottom: 30px;
+    border: solid black;
+    border-width: thin;
+    box-sizing: border-box;
+    width: 1200px;
+    margin-left: 80px;
+}
+
+.summary-section h3{
+    margin-top: 1px;
+    margin-left: 100px;
+    font-size: 25px;
+}
+
+.payslip-form-container .employee-summary h3{
+    font-size: 20px;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.employee-summary .left-section{
+    margin-left: -20px;
+}
+
+.employee-summary .left-section,
+.employee-summary .right-section {
+    width: 48%;
+    padding: 20px;
+}
+
+
+.employee-summary label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    font-size: 20px;
+    margin-left: 20px;
+}
+
+.employee-summary input {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 20px;
+}
+
+.earnings-deductions-container {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    margin-top: 50px;
+}
+
+.earnings-deductions-container
+{
+    box-sizing: 10px 10px 10px 10px rgba(1, 1, 1, 1);
+    border-radius: 25px;
+    padding: 10px;
+    border: solid black;
+    border-width: thin;
+    box-sizing: border-box;
+    width: 1200px;
+    margin-left: 80px;
+}
+
+.earnings-section,
+ .deductions-section {
+    width: 48%;
+}
+
+.earnings-section h3,
+ .deductions-section h3 {
+    text-align: left;
+    margin-bottom: 10px;
+}
+
+.earnings-section h2,
+.deductions-section h2{
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.earnings-section div,
+ .deductions-section div {
+    margin-bottom: 10px;
+}
+
+.earnings-section label, 
+.deductions-section label {
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.earnings-section input,
+.deductions-section input{
+    font-size: 20px;
+}
+
+.total-netpay-section{
+    box-sizing: 10px 10px 10px 10px rgb(5, 26, 4);
+    padding: 20px;
+    color: rgba(29, 27, 27, 0.8);
+    background-color: rgb(134, 248, 134);
+    border-radius: 25px;
+    margin-top: 50px;
+    border: solid  rgb(134, 248, 134);
+    border-width: thin;
+    box-sizing: border-box;
+    width: 1200px;
+    margin-left: 80px;
+}
+
+.total-netpay-section h3{
+    font-size: 25px;
+    margin-top: 20px;
+    text-align: left;
+}
+ 
+.total-netpay-section p{
+    font-size: 20px;
+    font-weight: 600;
+    text-align: right;
+}
+ 
+.total-netpay-section h2{
+    margin-top: -70px;
+    text-align: right;
+}
+
+.payslip-form-container button {
+    display: block;
+    width: 20%;
+    padding: 10px;
+    background-color: #048f24;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 40px;
+    margin-left: 550px;
+    font-size: 15px;
+}
+
+.payslip-form-container button:hover {
+    background-color: #0056b3;
+}
+
+.earnings-section label,
+.deductions-section label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.deductions-section input,
+.earnings-section input {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 20px;
+}
+
+.total-earnings p{
+    margin-top: 112px;
+    margin-left: 90px;
+    font-size: 25px;
+    font-weight: 600;
+}
+
+.total-deductions p{
+    font-size: 25px;
+    font-weight: 600;
+    margin-right: 90px;
+}

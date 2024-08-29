@@ -1,0 +1,103 @@
+.documentation {
+
+  background-color: #eeeeee;
+  font-family: 'Arial', sans-serif;
+  padding: 2rem;
+  text-align: center;
+  max-width: 600px;
+  margin: 0 auto;
+  border-radius: 10px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.documentation h2 {
+  font-size: 2.5rem;
+  color: #333;
+  margin-bottom: 2rem;
+}
+
+.fetch-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.fetch-section input {
+  padding: 10px;
+  font-size: 1rem;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  margin-right: 10px;
+  width: 200px;
+}
+
+.fetch-section button {
+  padding: 10px 20px;
+  font-size: 1rem;
+  border-radius: 5px;
+  border: none;
+  background-color: #06910b;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.fetch-section button:hover {
+  background-color: #263fe2;
+}
+
+.seniority-number {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+}
+
+.upload-form {
+  text-align: left;
+}
+
+.file-input {
+  margin-bottom: 1rem;
+}
+
+.file-input label {
+  display: block;
+  font-size: 1.1rem;
+  margin-bottom: 5px;
+}
+
+.file-input input {
+  width: 100%;
+  padding: 8px;
+  font-size: 1rem;
+  border-radius: 5px;
+  border: 1px solid #ffffff;
+}
+
+.error {
+  color: red;
+  margin-top: 1rem;
+}
+
+.success {
+  color: green;
+  margin-top: 1rem;
+}
+
+.upload-form button {
+  padding: 10px 20px;
+  font-size: 1rem;
+  border-radius: 5px;
+  border: none;
+  background-color: #048f24;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 1rem;
+  width: 100%;
+}
+
+.upload-form button:hover {
+  background-color: #263fe2;
+}

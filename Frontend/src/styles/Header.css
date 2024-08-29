@@ -1,0 +1,115 @@
+header {
+  background-color: #ffffff;
+  color: rgb(0, 0, 0);
+  padding: 1rem 0;
+  text-align: left;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  animation: slideDown 0.5s ease-in-out;
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 20px;
+  width: 3000px;
+}
+.image{
+  margin-left: 60px;
+}
+
+header h1 {
+  margin: 0;
+}
+
+nav {
+  background: linear-gradient(to right, #006400, #00FF00);
+  height: 50px;
+  padding: 0 20px; /* Adjusted padding for horizontal alignment */
+  display: flex;
+  font-weight: bolder;
+  align-items: center;
+  margin: 1rem 0;
+  gap: 1rem; /* Adjust space between each item */
+  width: 3000px;
+}
+
+nav a, .dropdown {
+  color: rgb(253, 253, 253);
+  text-decoration: none;
+  transition: color 0.3s;
+  margin-left: 40px;
+}
+
+nav a:hover, .dropdown:hover .dropbtn {
+  color: #edb834;
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropbtn {
+  color: rgb(255, 255, 255);
+  padding: 0.5rem 1rem;
+  border: none;
+  cursor: pointer;
+  background: none;
+  font-weight: bolder;
+  transition: color 0.3s;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: white;
+  text-align: left;
+  width: 200px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+}
+
+.dropdown-content a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  transition: background-color 0.3s;
+}
+
+.dropdown-content a:hover {
+  background-color: #f1f1f1;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+/* Animations */
+@keyframes slideDown {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.login button,
+.login a {
+  background: none;
+  border: none;
+  color:white;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  margin-left: 5px;
+}
+
+.login button:hover,
+.login a:hover {
+  color: #044b06;
+}
+
+.login .fa-user {
+  margin-right: 20px;
+  margin-left: 5px;
+}

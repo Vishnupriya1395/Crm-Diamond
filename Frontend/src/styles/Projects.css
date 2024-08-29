@@ -1,0 +1,20 @@
+.projects {
+  padding: 20px;
+}
+
+.projects ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.projects li {
+  margin: 10px 0;
+}
+
+.action-buttons {
+  margin-top: 20px;
+}
+
+.action-buttons button {
+  margin-right: 10px;
+}

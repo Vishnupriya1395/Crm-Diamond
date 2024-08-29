@@ -1,0 +1,65 @@
+.contact {
+  background-color: rgb(231, 235, 237);
+  font-family: 'Times New Roman', Times, serif;
+  padding: 4rem 2rem;
+  text-align: center;
+  animation: fadeIn 1s ease-in-out;
+  margin-top: 0px;
+}
+
+.contact h2 {
+  font-size: 3rem; /* Make the header larger for emphasis */
+  color: #000000;
+  margin-bottom: 1.5rem;
+  margin-top: 0px;
+}
+
+.head {
+  font-weight: bold;
+  font-size: 2rem; /* Keep the address header prominent but smaller than the main header */
+  margin-bottom: 1.5rem;
+  color: #000000; /* A slightly softer black for better readability */
+}
+
+.body {
+  font-size: 1.2rem;
+  max-width: 700px; /* Keep the content width reasonable for readability */
+  margin: 0 auto;
+  text-align: center;
+  line-height: 1.8;
+  color: #444; /* Softer color for the body text */
+}
+
+.body p {
+  font-size: 1.5rem; /* Adjusted for better readability */
+  margin-bottom: 1.5rem;
+}
+
+.body p b {
+  font-weight: bold;
+  color: #000; /* Use bold for emphasis within the text */
+}
+
+p{
+  margin-left: 20px;
+}
+
+.address {
+  font-size: 1.1rem;
+  line-height: 1.8;
+  margin: 0 auto;
+  text-align: center;
+  max-width: 600px;
+  font-weight: normal;
+  color: #444;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
