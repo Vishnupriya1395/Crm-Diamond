@@ -1,0 +1,18 @@
+footer {
+    background-color:white;
+    color: rgb(4, 4, 4);
+    padding: 1rem 0;
+    position: sticky;
+    width: 3000px;
+    height: 30px;
+    bottom: 0;
+    z-index: 1000;
+    font-family:'Courier New', Courier, monospace;
+    animation: slideUp 0.5s ease-in-out;
+    
+  }
+  
+  footer p{
+    margin-left: 750px;
+  }
+  

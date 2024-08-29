@@ -1,0 +1,72 @@
+.payslip-form-container-pdf {
+    font-size: 20px; /* Reduced font size to fit content */
+    width: 100%; 
+    margin: auto;
+  }
+  
+  .payslip-form-container-pdf .pdf-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  
+  .payslip-form-container-pdf .pdf-company-logo {
+    width: 110px;
+    height: 150px;
+  }
+  
+  .payslip-form-container-pdf .pdf-company-details {
+    font-size: 20px;
+    text-align: left;
+    line-height: 1.2;
+  }
+  
+  .payslip-form-container-pdf .summary-section {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  
+  .payslip-form-container-pdf .summary-section .left-section,
+  .payslip-form-container-pdf .summary-section .right-section {
+    width: 40%;
+  }
+  
+  .payslip-form-container-pdf .earnings-deductions-container {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    margin-top: 30px;
+  }
+  
+  .payslip-form-container-pdf .earnings-section,
+  .payslip-form-container-pdf .deductions-section {
+    width: 40%;
+  }
+  
+  .payslip-form-container-pdf .total-netpay-section {
+    text-align: center;
+    margin-top: 10px;
+  }
+  
+  .summary-section input[type="text"],
+  .summary-section input[type="email"]
+  {
+    width: 440px;
+    margin-left: 90px;
+  }
+
+  .summary-section label{
+    margin-left: 90px;
+  }
+
+.earnings-deductions-container input[type="text"]{
+    width: 440px;
+    margin-left: 90px;
+}
+
+.earnings-deductions-container label
+{
+    margin-left: 90px;
+}
