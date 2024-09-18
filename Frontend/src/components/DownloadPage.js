@@ -1,16 +1,22 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import * as XLSX from 'xlsx';
 import '../styles/DownloadPage.css';
 
 const DownloadPage = () => {
   const [data, setData] = useState([]);
   const [fullData, setFullData] = useState([]);
+  const navigate = useNavigate();
   const [seniorityNumber, setSeniorityNumber] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedManager, setSelectedManager] = useState('');
   const [selectedExecutive, setSelectedExecutive] = useState('');
   const [matches, setMatches] = useState([]);
   const [currentMatchIndex, setCurrentMatchIndex] = useState(0);
+
+ const handleViewPayments = (id) => {
+  navigate(`/payment-details/${id}`);
+ };
 
   const fetchData = async () => {
     try {
@@ -24,12 +30,14 @@ const DownloadPage = () => {
       const result = await response.json();
 
       const formattedData = result.map(item => {
-        const { _id, __v, date, dateofbirth, address, ...rest } = item;
+        const { _id, __v, date, dateofbirth, address,name, ...rest } = item;
         return {
           ...rest,
+          name: formatName(name),
           date: formatDate(date),
           dateofbirth: formatDate(dateofbirth),
-          address: formatAddress(address), // Correctly format the address object to a string
+          address: formatAddress(address), 
+         // Correctly format the address object to a string
         };
       });
 
@@ -46,6 +54,12 @@ const DownloadPage = () => {
     return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
   };
 
+  const formatName = (name) =>{
+    if(!name || typeof name !== 'object') return '';
+    const {firstName,lastName} = name;
+    return `${firstName || ''} ${lastName || ''}`;
+  };
+
   const formatAddress = (address) => {
     if (!address || typeof address !== 'object') return ''; // Handle invalid address
     const { flatNumber, streetName, area, city, district, state, postalCode, country } = address;
@@ -56,14 +70,17 @@ const DownloadPage = () => {
     if (seniorityNumber) {
       try {
         const response = await fetch(`http://localhost:5000/api/forms/seniority/${seniorityNumber}`);
+  
         if (!response.ok) {
           throw new Error(`Error fetching data: ${response.status} ${response.statusText}`);
         }
-        const result = await response.json();
+  
+        const result = await response.json(); // Expecting a JSON response
         if (result.length > 0) {
           setData(result.map(item => ({
             ...item,
-            address: formatAddress(item.address) // Format address before setting data
+            address: formatAddress(item.address), // Format address before setting data
+            name: formatName(item.name),
           })));
         } else {
           alert('No data found for the entered Seniority Number');
@@ -76,6 +93,7 @@ const DownloadPage = () => {
       alert("Please enter a seniority number.");
     }
   };
+  
 
   const handleFetchByManager = () => {
     if (selectedManager) {
@@ -178,8 +196,7 @@ const DownloadPage = () => {
         projectName: item.projectName,
         id: item.id,
         date: item.date,
-        firstName: item.firstName,
-        lastName: item.lastName,
+        name : item.name,
         mobileNumber: item.mobileNumber,
         alternativeMobileNumber: item.alternativeMobileNumber,
         dateofbirth: item.dateofbirth,
@@ -263,19 +280,9 @@ const DownloadPage = () => {
   return (
     <div className="download-page">
       <h2>Download Data</h2>
-
+      <div className="filter-section" >
       <div className="view-button"> 
         <button onClick={handleViewAll}>View All</button>
-      </div>
-
-      <div className="fetch-button">
-        <input
-          type="text"
-          placeholder="Seniority No"
-          value={seniorityNumber}
-          onChange={(e) => setSeniorityNumber(e.target.value)}
-        />
-        <button onClick={handleFetchBySeniority}>Fetch</button>
       </div>
 
       <div className="manager-filter">
@@ -286,6 +293,8 @@ const DownloadPage = () => {
           <option value="">Select Manager</option>
           <option value="Puneeth">Puneeth</option>
           <option value="Ravi">Ravi</option>
+          <option value="Jagadisha KJ"> Jagadhisha KJ </option>
+          <option value="Suraj">Suraj</option>
         </select>
         <button onClick={handleFetchByManager}>Fetch by Manager</button>
       </div>
@@ -309,10 +318,23 @@ const DownloadPage = () => {
           <option value="Raghu">Raghu</option>
           <option value="Bhavya">Bhavya</option>
           <option value="Mukul">Mukul</option>
+          <option value="Lavanya">Lavanya</option>
+          <option value="Ramesh">Ramesh</option>
+          <option value="Priyadharshini">Priyadharshini</option>
+          <option value="Asha">Asha</option>
+          <option value="JayaPrakash">JayaPrakash</option>
+          <option value="Syed Sahil">Syed Suhil</option>
+          <option value="Madhu Raj">Madhu Raj</option>
+          <option value="Arjun Vasudev">Arjun Vasudev</option>
+          <option value="Fazil">Fazil</option>
+          <option value="Raghu Gowda">Raghu Gowda</option>
+          <option value="Suhail Pasha">Suhail Pasha</option>
+          <option value="Mukul Rajkumar">Mukul Rajkumar</option>
+          <option value="Mamtha Parida">Mamtha Parida</option>
         </select>
         <button onClick={handleFetchByExecutive}>Fetch by Executive</button>
       </div>
-
+      </div>
       <section className="download-button">
         <button onClick={handleDownload}>Download Excel</button>
       </section>
@@ -332,108 +354,92 @@ const DownloadPage = () => {
           </div>
         )}
       </div>
-
       <table>
         <thead>
           <tr>
             <th>ProjectName</th>
             <th>ID</th>
             <th>Date</th>
-            <th>First Name</th>
-            <th>Last Name</th>
+            <th>Name</th>
             <th>Mobile Number</th>
             <th>Alternative Mobile Number</th>
             <th>Date of Birth</th>
             <th>Email ID</th>
-            <th>Address</th> {/* Address is now correctly formatted */}
+            <th  style={{ width: '250px' }}>Address</th> 
             <th>Manager Name</th>
             <th>Executive Name</th>
             <th>Seniority Number</th>
             <th>Square Feet</th>
             <th>Total Amount</th>
-            <th>Payment Type</th>
-            <th>Paid Amount</th>
-            <th>Pending Amount</th>
-            <th>Tid / C.no / DD</th>
-            <th>Bank Name</th>
-            <th>Branch</th>
-            <th>Payment %</th>
-            <th>Commission</th>
             <th>Aadhar</th>
             <th>Pancard</th>
             <th>Affidavit</th>
             <th>Photo</th>
+            <th>Action</th>
           </tr>
         </thead>
         <tbody>
-          {data.map((item, index) => (
-            <tr id={`row-${index}`} key={index}>
+          {data.map((item) => (
+            <tr id={`row-${item.id}`} key={item.id}>
               <td>{highlightSearchTerm(item.projectName)}</td>
               <td>{highlightSearchTerm(item.id)}</td>
               <td>{highlightSearchTerm(item.date)}</td>
-              <td>{highlightSearchTerm(item.firstName)}</td>
-              <td>{highlightSearchTerm(item.lastName)}</td>
+              <td>{highlightSearchTerm(item.name)}</td>
               <td>{highlightSearchTerm(item.mobileNumber)}</td>
               <td>{highlightSearchTerm(item.alternativeMobileNumber)}</td>
               <td>{highlightSearchTerm(item.dateofbirth)}</td>
               <td>{highlightSearchTerm(item.emailid)}</td>
-              <td>{highlightSearchTerm(item.address)}</td> {/* Render the formatted address */}
+              <td>{highlightSearchTerm(item.address)}</td>
               <td>{highlightSearchTerm(item.managerName)}</td>
               <td>{highlightSearchTerm(item.executiveName)}</td>
               <td>{highlightSearchTerm(item.seniorityNumber)}</td>
               <td>{highlightSearchTerm(item.squareFeet)}</td>
               <td>{highlightSearchTerm(item.totalAmount)}</td>
-              <td>{highlightSearchTerm(item.paymentType)}</td>
-              <td>{highlightSearchTerm(item.paidAmount)}</td>
-              <td>{highlightSearchTerm(item.pendingAmount)}</td>
-              <td>{highlightSearchTerm(item.tid)}</td>
-              <td>{highlightSearchTerm(item.bankName)}</td>
-              <td>{highlightSearchTerm(item.branch)}</td>
-              <td>{highlightSearchTerm(item.paymentPercentage)}</td>
-              <td>{highlightSearchTerm(item.commission)}</td>
               <td>
-                {item.aadharFile ? (
-                  <a href={`http://localhost:5000/${item.aadharFile}`} target="_blank" rel="noopener noreferrer">
-                    View Aadhar
-                  </a>
-                ) : (
-                  <>&nbsp;</> // Render empty space if no file
-                )}
-              </td>
-              <td>
-                {item.pancardFile ? (
-                  <a href={`http://localhost:5000/${item.pancardFile}`} target="_blank" rel="noopener noreferrer">
-                    View Pancard
-                  </a>
-                ) : (
-                  <>&nbsp;</> // Render empty space if no file
-                )}
-              </td>
-              <td>
-                {item.affidavitFile ? (
-                  <a href={`http://localhost:5000/${item.affidavitFile}`} target="_blank" rel="noopener noreferrer">
-                    View Affidavit
-                  </a>
-                ) : (
-                  <>&nbsp;</> // Render empty space if no file
-                )}
-              </td>
-              <td>
-                {item.photoFile ? (
-                  <a href={`http://localhost:5000/${item.photoFile}`} target="_blank" rel="noopener noreferrer">
-                    View Photo
-                  </a>
-                ) : (
-                  <>&nbsp;</> // Render empty space if no file
-                )}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+  {item.aadharFile ? (
+    <a href={`http://localhost:5000/api/documentation/file/${item.aadharFile}`} target="_blank" rel="noopener noreferrer">
+      View Aadhar
+    </a>
+  ) : (
+    <>&nbsp;</>
+  )}
+</td>
+<td>
+  {item.pancardFile ? (
+    <a href={`http://localhost:5000/api/documentation/file/${item.pancardFile}`} target="_blank" rel="noopener noreferrer">
+      View Pancard
+    </a>
+  ) : (
+    <>&nbsp;</>
+  )}
+</td>
+<td>
+  {item.affidavitFile ? (
+    <a href={`http://localhost:5000/api/documentation/file/${item.affidavitFile}`} target="_blank" rel="noopener noreferrer">
+      View Affidavit
+    </a>
+  ) : (
+    <>&nbsp;</>
+  )}
+</td>
+<td>
+  {item.photoFile ? (
+    <a href={`http://localhost:5000/api/documentation/file/${item.photoFile}`} target="_blank" rel="noopener noreferrer">
+      View Photo
+    </a>
+  ) : (
+    <>&nbsp;</>
+  )}
+</td>
+<td>
+  <button onClick={ () => handleViewPayments(item.id)}>View Payments</button>
+</td>
 
-      <br />
-   
+  </tr>
+      ))}
+      </tbody>
+      </table>
+      <br/>
     </div>
   );
 };

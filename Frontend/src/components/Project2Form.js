@@ -1,20 +1,21 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useLocation } from 'react-router-dom';
-import Header from './Header';
+import { useLocation, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import '../styles/ProjectForm.css';
 
 const Project2Form = () => {
+  const navigate = useNavigate();
   const location = useLocation();
-  <Header />;
-  const [isExistingMember, setIsExistingMember] = useState(null);
-  const [existingPaidAmount, setExistingPaidAmount] = useState(0);
-  const [payAmount, setPayAmount] = useState('');
+  const [selectedProject, setSelectedProject] = useState('');
+  const [isExistingMember, setIsExistingMember] = useState(null); // State for existing member question
   const [formData, setFormData] = useState({
     projectName: location.state?.projectName || 'Krishna Greens North Star',
     id: '',
     date: '',
-    firstName: '',
-    lastName: '',
+    name: {
+      firstName: '',
+      lastName: '',
+    },
     mobileNumber: '',
     alternativeMobileNumber: '',
     dateofbirth: '',
@@ -30,27 +31,17 @@ const Project2Form = () => {
       country: 'India',
     },
     managerName: '',
+    assistantManagerName: '',
     executiveName: '',
     seniorityNumber: '',
     squareFeet: '',
     totalAmount: '',
-    aadharFile: '',
-    pancardFile: '',
-    photoFile: '',
-    affidavitFile: '',
-    paymentTypes: [],
-    paidAmounts: [],
-    pendingAmounts: [],
-    paymentDates: [],
-    tids: [],
-    bankNames: [],
-    branches: [],
-    commissions: [],
-    paymentPercentages: [],
   });
+
   const [error, setError] = useState('');
-  const [isCustomerSubmitted, setIsCustomerSubmitted] = useState(false);
-  const [customerId, setCustomerId] = useState(null);
+  const [showMessage, setShowMessage] = useState(false);
+  const [message, setMessage] = useState('');
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
   const amountBySquareFeet = {
     '30x40': '4,67,640',
@@ -60,17 +51,29 @@ const Project2Form = () => {
   };
 
   const executivesByManager = {
-    Puneeth: ['Nithin', 'Shrinidhi', 'Shyla', 'Raghu', 'Bhavya', 'Mukul'],
-    Ravi: ['Shravani', 'Monty', 'Anup R', 'Priyanka', 'Anitha', 'Jagadhish', 'Madhu'],
+    Puneeth: ['Raghu Gowda', 'Bhavya', 'Shyla K', 'Suhail Pasha', 'Sushma Gowda', 'Mukul Rajkumar', 'Mamtha Parida'],
+    Ravi: ['Shravani', 'Anitha Y', 'Priyanka', 'Arjun Vasudev', 'Madhu Raj', 'Faizal', 'Syed Sahil'],
+    Suraj: ['Asha', 'Priyadharshini', 'Ramesh', 'Lavanya', 'JayaPrakash'],
+    Jagadisha: ['Nithin'],
   };
 
-  const resetFormData = useCallback(() => {
+  const assistantManagerByManager = {
+    Puneeth: 'Anup R',
+    Ravi: 'Shrinidhi G S',
+    Suraj: 'Monty M V',
+    Jagadisha: 'Nithin J',
+  };
+
+  // Reset form data and ask the "Are you an existing member?" question every time the project is selected
+  const resetFormAndAskQuestion = useCallback(() => {
     setFormData({
-      projectName: location.state?.projectName || 'Krishna Greens North Star',
+      projectName: selectedProject|| 'Krishna Greens North Star',
       id: '',
       date: '',
-      firstName: '',
-      lastName: '',
+      name: {
+        firstName: '',
+        lastName: '',
+      },
       mobileNumber: '',
       alternativeMobileNumber: '',
       dateofbirth: '',
@@ -86,39 +89,21 @@ const Project2Form = () => {
         country: 'India',
       },
       managerName: '',
+      assistantManagerName: '',
       executiveName: '',
       seniorityNumber: '',
       squareFeet: '',
       totalAmount: '',
-      aadharFile: '',
-      pancardFile: '',
-      photoFile: '',
-      affidavitFile: '',
-      paymentTypes: [],
-      paidAmounts: [],
-      pendingAmounts: [],
-      paymentDates: [],
-      tids: [],
-      bankNames: [],
-      branches: [],
-      commissions: [],
-      paymentPercentages: [],
     });
-    setExistingPaidAmount(0);
-    setPayAmount('');
+    setIsExistingMember(null); // Reset the question to ask it again
     setError('');
-    setIsCustomerSubmitted(false);
-    setCustomerId(null);
-  }, [location.state?.projectName]);
+  }, [selectedProject]);
 
-  const capitalizeFirstLetter = (string) => {
-    return string.charAt(0).toUpperCase() + string.slice(1);
-  };
-
+  // Reset the state every time the project changes or the user navigates to the same project
   useEffect(() => {
-    setIsExistingMember(null);
-    resetFormData();
-  }, [location.pathname, resetFormData]);
+    setSelectedProject(location.state?.projectName || 'Krishna Greens North Star');
+    resetFormAndAskQuestion();
+  }, [location.pathname, resetFormAndAskQuestion]); // Triggers every time the path or project changes
 
   const fetchLocationData = async (pincode) => {
     if (pincode.length === 6) {
@@ -168,10 +153,9 @@ const Project2Form = () => {
     const capitalizedValue =
       name === 'mobileNumber' ||
       name === 'alternativeMobileNumber' ||
-      name === 'emailid' ||
-      name === 'paymentType'
+      name === 'emailid'
         ? value
-        : capitalizeFirstLetter(value);
+        : value.charAt(0).toUpperCase() + value.slice(1);
 
     if (name in formData.address) {
       setFormData((prevFormData) => ({
@@ -180,6 +164,20 @@ const Project2Form = () => {
           ...prevFormData.address,
           [name]: capitalizedValue,
         },
+      }));
+    } else if (name in formData.name) {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        name: {
+          ...prevFormData.name,
+          [name]: capitalizedValue,
+        },
+      }));
+    } else if (name === 'managerName') {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        [name]: value,
+        assistantManagerName: assistantManagerByManager[value] || '',
       }));
     } else {
       setFormData((prevFormData) => ({
@@ -190,183 +188,96 @@ const Project2Form = () => {
     }
   };
 
-  const handlePayAmountChange = (e) => {
-    setPayAmount(e.target.value);
-  };
-
   const handleMemberStatus = (status) => {
     setIsExistingMember(status);
     setError('');
   };
 
   const fetchMemberData = async () => {
-    if (!formData.mobileNumber) {
-      setError('Please enter a mobile number to fetch data.');
-      return;
-    }
-  
     try {
-      const response = await fetch(`http://localhost:5000/api/forms/member/${formData.mobileNumber}`);
-  
-      if (!response.ok) {
+      const response = await axios.get(`http://localhost:5000/api/forms/member/${formData.mobileNumber}`);
+
+      if (response.status !== 200) {
         throw new Error(`Failed to fetch data: ${response.statusText}`);
       }
-  
-      const contentType = response.headers.get('content-type');
-      if (contentType && contentType.indexOf('application/json') !== -1) {
-        const data = await response.json();
-        if (data && Object.keys(data).length > 0) {
-          const formattedData = {
-            ...formData,
-            ...data,
-            date: data.date ? data.date.substring(0, 10) : '',
-            dateofbirth: data.dateofbirth ? data.dateofbirth.substring(0, 10) : '',
-            firstName: data.firstName || '',
-            lastName: data.lastName || '',
-            emailid: data.emailid || '',
-            address: {
-              flatNumber: data.address.flatNumber || '',
-              streetName: data.address.streetName || '',
-              area: data.address.area || '',
-              city: data.address.city || '',
-              district: data.address.district || '',
-              state: data.address.state || '',
-              postalCode: data.address.postalCode || '',
-              country: data.address.country || 'India',
-            },
-            paymentTypes: data.paymentTypes || [],
-            paidAmounts: data.paidAmounts || [],
-            pendingAmounts: data.pendingAmounts || [],
-            paymentDates: data.paymentDates || [],
-            tids: data.tids || [],
-            bankNames: data.bankNames || [],
-            branches: data.branches || [],
-            commissions: data.commissions || [],
-            paymentPercentages: data.paymentPercentages || [],
-          };
-  
-          setFormData(formattedData);
-          setExistingPaidAmount(
-            data.paidAmounts.reduce((sum, amt) => sum + parseFloat(amt.replace(/,/g, '')), 0)
-          );
-          setError('');
-        } else {
-          setError('No data found for the given mobile number');
-        }
+
+      const data = response.data;
+
+      if (data && Object.keys(data).length > 0) {
+        const formattedData = {
+          ...formData,
+          ...data,
+          date: data.date ? data.date.substring(0, 10) : '',
+          dateofbirth: data.dateofbirth ? data.dateofbirth.substring(0, 10) : '',
+          name: {
+            firstName: data.name?.firstName || '',
+            lastName: data.name?.lastName || '',
+          },
+          emailid: data.emailid || '',
+          address: {
+            flatNumber: data.address.flatNumber || '',
+            streetName: data.address.streetName || '',
+            area: data.address.area || '',
+            city: data.address.city || '',
+            district: data.address.district || '',
+            state: data.address.state || '',
+            postalCode: data.address.postalCode || '',
+            country: data.address.country || 'India',
+          },
+          managerName: data.managerName || '',
+          assistantManagerName: assistantManagerByManager[data.managerName] || '',
+        };
+
+        setFormData(formattedData);
+        setError('');
       } else {
-        throw new Error('Received non-JSON response from server');
+        setError('No data found for the given mobile number');
       }
     } catch (error) {
       console.error('Error fetching member data:', error);
       setError('Error fetching member data. Please try again later.');
     }
   };
-  
 
-  const handleCustomerSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
 
-    const fullAddress = `${formData.address.flatNumber || ''}, ${formData.address.streetName || ''}, ${formData.address.area || ''}, ${formData.address.city || ''}, ${formData.address.district || ''}, ${formData.address.state || ''}, ${formData.address.country || ''}`
-      .trim()
-      .replace(/,\s*$/, '');
-
-    const updatedFormData = {
-      ...formData,
-      address: {
-        ...formData.address,
-        fullAddress,
-      },
-    };
-
-    console.log('Submitting customer data:', updatedFormData);
-
     try {
-      const response = await fetch('http://localhost:5000/api/customer/submit', {
+      const response = await fetch('http://localhost:5000/api/forms/submit', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(updatedFormData),
+        body: JSON.stringify(formData),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        console.error('Backend error:', errorData); // Log backend error
+        if (errorData.message.includes('duplicate key error')) {
+          setMessage('Mobile number already exists. Try a different mobile number.');
+          setShowMessage(true);
+          setTimeout(() => setShowMessage(false), 3000);
+          return;
+        }
         throw new Error(errorData.message || 'Network response was not ok');
       }
-
       const data = await response.json();
-      console.log('Customer data submitted successfully:', data);
-
-      setCustomerId(data._id);  // Save the customer ID for adding payment installments
-      setIsCustomerSubmitted(true);  // Mark customer submission as completed
+      console.log('Form submitted successfully:', data);
+      alert('Form Submitted Successfully');
+      setIsSubmitted(true);
     } catch (error) {
-      console.error('Error submitting customer data:', error); // Log the error for debugging
-      setError('Error submitting form. Please try again later.');
+      console.error('Error submitting form:', error);
+      alert('Mobile number already exists. Try a different mobile number.');
     }
   };
 
-  const handleAddPayment = async (e) => {
-    e.preventDefault();
-    setError('');
-
-    if (!payAmount) {
-      setError('Please enter a valid payment amount.');
-      return;
-    }
-
-    const total = parseFloat(formData.totalAmount.replace(/,/g, '')) || 0;
-    const paid = parseFloat(existingPaidAmount) || 0;
-    const newPay = parseFloat(payAmount.replace(/,/g, '')) || 0;
-    const newPendingAmount = total - (paid + newPay);
-
-    const paymentData = {
-      paymentType: formData.paymentType,
-      paidAmount: newPay.toLocaleString(),
-      pendingAmount: newPendingAmount.toLocaleString(),
-      tid: formData.tid,
-      bankName: formData.bankName,
-      branch: formData.branch,
-      date: new Date(),
-      commission: formData.commission,
-    };
-
-    try {
-      const response = await fetch(`http://localhost:5000/api/payment/add/${customerId}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(paymentData),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error('Backend error:', errorData); // Log backend error
-        throw new Error(errorData.message || 'Network response was not ok');
-      }
-
-      const data = await response.json();
-      console.log('Payment added successfully:', data);
-
-      setFormData((prevFormData) => ({
-        ...prevFormData,
-        paidAmounts: [...prevFormData.paidAmounts, newPay.toLocaleString()],
-        pendingAmounts: [...prevFormData.pendingAmounts, newPendingAmount.toLocaleString()],
-        paymentDates: [...prevFormData.paymentDates, new Date()],
-        tids: [...prevFormData.tids, formData.tid],
-        bankNames: [...prevFormData.bankNames, formData.bankName],
-        branches: [...prevFormData.branches, formData.branch],
-        commissions: [...prevFormData.commissions, formData.commission],
-      }));
-
-      setExistingPaidAmount(paid + newPay);
-      setPayAmount('');
-    } catch (error) {
-      console.error('Error adding payment:', error); // Log the error for debugging
-      setError('Error adding payment. Please try again later.');
-    }
+  const handleMakePayment = () => {
+    navigate('/payment-installment', {
+      state: {
+        mobileNumber: formData.mobileNumber,
+      },
+    });
   };
 
   return (
@@ -378,24 +289,24 @@ const Project2Form = () => {
           <button onClick={() => handleMemberStatus(true)}>Yes</button>
           <button onClick={() => handleMemberStatus(false)}>No</button>
         </div>
-      ) : !isCustomerSubmitted ? (
-        <form onSubmit={handleCustomerSubmit}>
-          {isExistingMember && (
-            <label>
-              Mobile Number:
-              <input
-                type="text"
-                name="mobileNumber"
-                value={formData.mobileNumber || ''}
-                onChange={handleChange}
-                required
-                maxLength="10"
-              />
+      ) : (
+        <form onSubmit={handleSubmit}>
+          <label>
+            Mobile Number:
+            <input
+              type="text"
+              name="mobileNumber"
+              value={formData.mobileNumber || ''}
+              onChange={handleChange}
+              required
+              maxLength="10"
+            />
+            {isExistingMember && (
               <button type="button" onClick={fetchMemberData}>
                 Fetch Data
               </button>
-            </label>
-          )}
+            )}
+          </label>
           <label>
             Project Name:
             <select name="projectName" value={formData.projectName || ''} onChange={handleChange} required>
@@ -415,22 +326,11 @@ const Project2Form = () => {
             </label>
             <label>
               First Name:
-              <input type="text" name="firstName" value={formData.firstName || ''} onChange={handleChange} required />
+              <input type="text" name="firstName" value={formData.name.firstName || ''} onChange={handleChange} required />
             </label>
             <label>
               Last Name:
-              <input type="text" name="lastName" value={formData.lastName || ''} onChange={handleChange} required />
-            </label>
-            <label>
-              Mobile Number:
-              <input
-                type="text"
-                name="mobileNumber"
-                value={formData.mobileNumber || ''}
-                onChange={handleChange}
-                required
-                maxLength="10"
-              />
+              <input type="text" name="lastName" value={formData.name.lastName || ''} onChange={handleChange} required />
             </label>
             <label>
               Alternative Mobile Number:
@@ -483,14 +383,6 @@ const Project2Form = () => {
               <input type="text" name="city" value={formData.address.city || ''} onChange={handleChange} required />
             </label>
             <label>
-              District:
-              <input type="text" name="district" value={formData.address.district || ''} onChange={handleChange} required readOnly />
-            </label>
-            <label>
-              State:
-              <input type="text" name="state" value={formData.address.state || ''} onChange={handleChange} required readOnly />
-            </label>
-            <label>
               Postal Code:
               <input
                 type="text"
@@ -500,6 +392,14 @@ const Project2Form = () => {
                 required
                 maxLength="6"
               />
+            </label>
+            <label>
+              District:
+              <input type="text" name="district" value={formData.address.district || ''} onChange={handleChange} required readOnly />
+            </label>
+            <label>
+              State:
+              <input type="text" name="state" value={formData.address.state || ''} onChange={handleChange} required readOnly />
             </label>
             <label>
               Country:
@@ -519,6 +419,10 @@ const Project2Form = () => {
                   </option>
                 ))}
               </select>
+            </label>
+            <label>
+              Assistant Manager Name:
+              <input type="text" name="assistantManagerName" value={formData.assistantManagerName || ''} readOnly />
             </label>
             <label>
               Executive Name:
@@ -562,58 +466,14 @@ const Project2Form = () => {
             </label>
           </fieldset>
 
-          <button type="submit">Submit Customer Details</button>
-
+          <button type="submit">Submit Form</button>
+          <button type="button" onClick={handleMakePayment}>Make Payment</button>
           {error && <p className="error">{error}</p>}
-        </form>
-      ) : (
-        <form onSubmit={handleAddPayment}>
-          <fieldset>
-            <legend>Payment Installment</legend>
-            <label>
-              Paid Amount:
-              <input type="text" name="payAmount" value={payAmount || ''} onChange={handlePayAmountChange} required />
-            </label>
-            <label>
-              Pending Amount:
-              <input type="text" name="pendingAmount" value={formData.pendingAmounts[formData.pendingAmounts.length - 1] || ''} onChange={handleChange} readOnly />
-            </label>
-            <label>
-              Payment Type:
-              <select name="paymentType" value={formData.paymentType || ''} onChange={handleChange} required>
-                <option value="">Select Payment</option>
-                <option value="cash">Cash</option>
-                <option value="cheque">Cheque</option>
-                <option value="netbanking">Net Banking</option>
-                <option value="dd">D.D</option>
-                <option value="nach\ecs">NACH\ECS</option>
-              </select>
-            </label>
-            <label>
-              TID:
-              <input type="text" name="tid" value={formData.tid || ''} onChange={handleChange} required />
-            </label>
-            <label>
-              Bank Name:
-              <input type="text" name="bankName" value={formData.bankName || ''} onChange={handleChange} required />
-            </label>
-            <label>
-              Branch:
-              <input type="text" name="branch" value={formData.branch || ''} onChange={handleChange} required />
-            </label>
-            <label>
-              Commission:
-              <select name="commission" value={formData.commission || ''} onChange={handleChange} required>
-                <option value="">Select Commission Status</option>
-                <option value="Pending">Pending</option>
-                <option value="Completed">Completed</option>
-              </select>
-            </label>
-          </fieldset>
-
-          <button type="submit">Add Payment</button>
-
-          {error && <p className="error">{error}</p>}
+          {showMessage && (
+            <div className="message-box">
+              <p>{message}</p>
+            </div>
+          )}
         </form>
       )}
     </div>

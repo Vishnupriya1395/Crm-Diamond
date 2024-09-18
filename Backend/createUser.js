@@ -7,15 +7,13 @@ const mongoURI = 'mongodb://localhost:27017/DiamondCrown';
 // const mongoURI = 'mongodb+srv://your_username:your_password@cluster.mongodb.net/your_database_name';
 
 // Connecting to MongoDB
-mongoose.connect(mongoURI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-}).then(() => {
-  console.log('MongoDB connected');
-}).catch(err => {
-  console.error('Error connecting to MongoDB:', err);
-});
-
+mongoose.connect(mongoURI)
+  .then(() => {
+    console.log('MongoDB connected');
+  })
+  .catch(err => {
+    console.error('Error connecting to MongoDB:', err);
+  });
 // Define a User schema
 const userSchema = new mongoose.Schema({
   username: { type: String, required: true, unique: true },

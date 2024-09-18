@@ -10,6 +10,7 @@
     "base64-arraybuffer": "^1.0.2",
     "bcrypt": "^5.1.1",
     "bcryptjs": "^2.4.3",
+    "body-parser": "^1.20.2",
     "btoa": "^1.2.1",
     "canvg": "^3.0.10",
     "combined-stream": "^1.0.8",

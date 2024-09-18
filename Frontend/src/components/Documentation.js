@@ -1,128 +1,168 @@
-import React, { useState, useEffect } from 'react';
-import * as XLSX from 'xlsx';
-import '../styles/DownloadPage.css';
-import PaymentDetails from './PaymentDetails'; // New component for payment details
+import React, { useState } from 'react';
+import '../styles/Documentation.css';
 
-const DownloadPage = () => {
-  const [data, setData] = useState([]);
-  const [fullData, setFullData] = useState([]);
-  const [seniorityNumber, setSeniorityNumber] = useState('');
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedManager, setSelectedManager] = useState('');
-  const [selectedExecutive, setSelectedExecutive] = useState('');
-  const [matches, setMatches] = useState([]);
-  const [currentMatchIndex, setCurrentMatchIndex] = useState(0);
-  const [selectedClient, setSelectedClient] = useState(null); // To handle the selected client for payment details
+const Documentation = () => {
+  const [mobileNumber, setmobileNumber] = useState('');
+  const [memberData, setMemberData] = useState(null); // Combined state to hold fetched data
+  const [aadharFile, setAadharFile] = useState(null);
+  const [pancardFile, setPancardFile] = useState(null);
+  const [affidavitFile, setAffidavitFile] = useState(null);
+  const [photoFile, setPhotoFile] = useState(null);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
 
-  const fetchData = async () => {
+  const fetchMemberData = async () => {
+    if (!mobileNumber) {
+      setErrorMessage('Please enter a phone number.');
+      return;
+    }
+
     try {
-      const url = 'http://localhost:5000/api/forms/all';
-      const response = await fetch(url);
-
+      const response = await fetch(`http://localhost:5000/api/documentation/member/${mobileNumber}`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const result = await response.json();
+      const data = await response.json();
+      console.log("Fetched Member Data:", data);  // Confirming the data is fetched
 
-      const formattedData = result.map(item => {
-        const { _id, __v, date, dateofbirth, address, firstName, lastName, ...rest } = item;
-        return {
-          ...rest,
-          clientName: `${firstName} ${lastName}`, // Merge first and last name into Client Name
-          date: formatDate(date),
-          dateofbirth: formatDate(dateofbirth),
-          address: formatAddress(address), // Correctly format the address object to a string
-        };
-      });
-
-      setData(formattedData);
-      setFullData(formattedData);
+      if (data) {
+        setMemberData(data); // Set the fetched data
+        setErrorMessage('');
+       
+        
+      } else {
+        setErrorMessage('No data found for the entered phone number.');
+        alert('"No data found on the entered phone number"');
+      }
     } catch (error) {
-      console.error('Error fetching data:', error);
+      console.error('Error fetching member data:', error);
+      alert('"No data found on the entered phone number"');
+      setMemberData(null); // Clear member data if error occurs
     }
   };
 
-  const formatDate = (dateString) => {
-    if (!dateString) return '';
-    const date = new Date(dateString);
-    return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
+  const handleFileChange = (e, setFile) => {
+    const file = e.target.files[0];
+    if (file && file.size <= 10 * 1024 * 1024) {
+      setFile(file);
+      setErrorMessage('');
+    } else {
+      setErrorMessage('File size must be 10MB or less.');
+    }
   };
 
-  const formatAddress = (address) => {
-    if (!address || typeof address !== 'object') return ''; // Handle invalid address
-    const { flatNumber, streetName, area, city, district, state, postalCode, country } = address;
-    return `${flatNumber || ''}, ${streetName || ''}, ${area || ''}, ${city || ''}, ${district || ''}, ${state || ''}, ${postalCode || ''}, ${country || ''}`;
-  };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  const handleViewPayments = (clientId) => {
-    setSelectedClient(clientId); // Set the selected client for displaying payment details
-  };
+    if (!memberData) {
+      setErrorMessage('Please fetch the member data first.');
+      return;
+    }
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+    const formData = new FormData();
+    if (aadharFile) formData.append('aadharFile', aadharFile);
+    if (pancardFile) formData.append('pancardFile', pancardFile);
+    if (affidavitFile) formData.append('affidavitFile', affidavitFile);
+    if (photoFile) formData.append('photoFile', photoFile);
+
+for(let [key,value] of formData.entries())
+{
+  console.log(`${key}: ${value.name}`);
+}
+
+    try {
+      const response = await fetch(`http://localhost:5000/api/documentation/upload/${mobileNumber}`, {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (response.ok) {
+        setSuccessMessage('Documents uploaded successfully.');
+      
+        setErrorMessage('');
+        // Reset form after successful submission
+        setAadharFile(null);
+        setPancardFile(null);
+        setAffidavitFile(null);
+        setPhotoFile(null);
+        setmobileNumber('');
+        setMemberData(null);
+      } else {
+        setErrorMessage('An error occurred while uploading the documents.');
+      }
+    } catch (error) {
+      console.error('Error submitting the form:', error);
+      setErrorMessage('An error occurred while submitting the form.');
+    }
+  };
 
   return (
-    <div className="download-page">
-      <h2>Download Data</h2>
+    <div className="documentation">
+      <h2>Documentation Upload</h2>
 
-      {/* Fetch and Filter Buttons, Search Box, etc. remain unchanged */}
+      <div className="fetch-section">
+        <input
+          type="text"
+          placeholder="Enter Phone Number"
+          value={mobileNumber}
+          onChange={(e) => setmobileNumber(e.target.value)}
+        />
+        <button onClick={fetchMemberData}>Fetch</button>
+      </div>
 
-      <table>
-        <thead>
-          <tr>
-            <th>Project Name</th>
-            <th>ID</th>
-            <th>Date</th>
-            <th>Client Name</th> {/* New merged Client Name column */}
-            <th>Mobile Number</th>
-            <th>Alternative Mobile Number</th>
-            <th>Date of Birth</th>
-            <th>Email ID</th>
-            <th>Address</th>
-            <th>Manager Name</th>
-            <th>Executive Name</th>
-            <th>Seniority Number</th>
-            <th>Square Feet</th>
-            <th>Total Amount</th>
-            <th>Payment %</th>
-            <th>Commission</th>
-            <th>Action</th> {/* New Action column for View Payments */}
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((item, index) => (
-            <tr id={`row-${index}`} key={index}>
-              <td>{highlightSearchTerm(item.projectName)}</td>
-              <td>{highlightSearchTerm(item.id)}</td>
-              <td>{highlightSearchTerm(item.date)}</td>
-              <td>{highlightSearchTerm(item.clientName)}</td> {/* Render merged Client Name */}
-              <td>{highlightSearchTerm(item.mobileNumber)}</td>
-              <td>{highlightSearchTerm(item.alternativeMobileNumber)}</td>
-              <td>{highlightSearchTerm(item.dateofbirth)}</td>
-              <td>{highlightSearchTerm(item.emailid)}</td>
-              <td>{highlightSearchTerm(item.address)}</td> {/* Render the formatted address */}
-              <td>{highlightSearchTerm(item.managerName)}</td>
-              <td>{highlightSearchTerm(item.executiveName)}</td>
-              <td>{highlightSearchTerm(item.seniorityNumber)}</td>
-              <td>{highlightSearchTerm(item.squareFeet)}</td>
-              <td>{highlightSearchTerm(item.totalAmount)}</td>
-              <td>{highlightSearchTerm(item.paymentPercentage)}</td>
-              <td>{highlightSearchTerm(item.commission)}</td>
-              <td>
-                <button onClick={() => handleViewPayments(item.id)}>View Payments</button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      {/* Rendering Member Data */}
+      {memberData && (
+        <div className="member-info">
+          <p><strong> Name:</strong>  {memberData.name.firstName} {memberData.name.lastName}</p>
+          <p><strong>Seniority Number:</strong> {memberData.seniorityNumber}</p>
+        </div>
+      )}
 
-      <br />
+      {errorMessage && <p className="error">{errorMessage}</p>}
+      {successMessage && <p className="success">{successMessage}</p>}
 
-      {selectedClient && <PaymentDetails clientId={selectedClient} />} {/* Render PaymentDetails for selected client */}
+      <form onSubmit={handleSubmit} className="upload-form">
+        <div className="file-input">
+          <label>Aadhar PDF:</label>
+          <input
+            type="file"
+            accept="application/pdf"
+            onChange={(e) => handleFileChange(e, setAadharFile)}
+          />
+        </div>
+
+        <div className="file-input">
+          <label>Pancard PDF:</label>
+          <input
+            type="file"
+            accept="application/pdf"
+            onChange={(e) => handleFileChange(e, setPancardFile)}
+          />
+        </div>
+
+        <div className="file-input">
+          <label>Affidavit PDF:</label>
+          <input
+            type="file"
+            accept="application/pdf"
+            onChange={(e) => handleFileChange(e, setAffidavitFile)}
+          />
+        </div>
+
+        <div className="file-input">
+          <label>Passport Size Photo (JPEG/PNG):</label>
+          <input
+            type="file"
+            accept="image/jpeg, image/png"
+            onChange={(e) => handleFileChange(e, setPhotoFile)}
+          />
+        </div>
+
+        <button type="submit">Submit</button>
+      </form>
     </div>
   );
 };
 
-export default DownloadPage;
+export default Documentation;

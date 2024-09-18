@@ -19,6 +19,13 @@ header h1 {
   margin: 0;
 }
 
+.user-role{
+  font-size: 25px;
+  font-weight: 600;
+  color:#0e5210;
+  margin-right: 20px;
+}
+
 nav {
   background: linear-gradient(to right, #006400, #00FF00);
   height: 50px;
@@ -106,7 +113,7 @@ nav a:hover, .dropdown:hover .dropbtn {
 
 .login button:hover,
 .login a:hover {
-  color: #044b06;
+background:none;
 }
 
 .login .fa-user {

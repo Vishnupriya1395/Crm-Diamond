@@ -2,47 +2,52 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
 const http = require('http');
 const WebSocket = require('ws');
 const path = require('path');  // Import path module
 const formRoutes = require('./routes/formRoutes');
-const projectRoutes = require('./routes/projectRoutes');
 const authRoutes = require('./routes/authRoutes');
-const customerRoutes = require('./routes/forms');
 const paymentRoutes = require('./routes/paymentRoutes');
 const documentationRoutes = require('./routes/documentationRoutes');
+const app = express();
 require('dotenv').config();
 
 
-// Initialize express app
-const app = express();
 
 // CORS configuration
 const corsOption= {
   origin: 'http://localhost:3000', // Your React app's URL
   credentials: true, // Allow credentials (cookies, authorization headers, etc.)
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed methods
+  allowedHeaders: ['Content-Type', 'Authorization'], // Allowed headers
 };
 
-app.use(cors({origin:'http://localhost:3000', credentials:true})); // Use the CORS middleware with options
-app.use(express.json());
-app.use(cookieParser()); // Use the cookieParser middleware
-
-app.get('/test', (req, res) => {
-  res.send('Test endpoint is working');
-});
 
 // Connect to MongoDB using the connection string from environment variables
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log('MongoDB connected'))
   .catch(err => console.error('MongoDB connection error:', err));
 
+
+app.use(cors(corsOption)); // Use the CORS middleware with options
+app.use(express.json());
+app.use(cookieParser()); // Use the cookieParser middleware
+app.use(bodyParser.json()); // Parse JSON-encoded bodies
+app.use(bodyParser.urlencoded({ extended: true })); // Parse URL-encoded bodies
+
+
 // Define routes
-app.use('/api/forms', formRoutes);
-app.use('/api/projects', projectRoutes);
-app.use('/api/auth', authRoutes);
-app.use('/api/customer', customerRoutes);
-app.use('/api/payment', paymentRoutes);
 app.use('/api/documentation', documentationRoutes);
+app.use('/api/payments', paymentRoutes);
+app.use('/api/forms', formRoutes);
+app.use('/api/auth', authRoutes);
+
+
+
+app.get('/test', (req, res) => {
+  res.send('Test endpoint is working');
+});
 
 // Serve static files from the React app (build folder)
 app.use(express.static(path.join(__dirname, 'build')));

@@ -61,7 +61,7 @@
 .login-container button {
   width: 200px;
   padding: 10px;
-  background: linear-gradient(to right, #006400, #00FF00);
+  background:green;
   color: white;
   border: none;
   border-radius: 4px;

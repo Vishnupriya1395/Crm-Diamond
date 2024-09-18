@@ -9,11 +9,9 @@ const Projects = () => {
       <h2>Projects</h2>
       <ul>
         <li>
-          <Link to="#">Krishna Green Midlake III</Link>
-        </li>
+        <Link to="/projects/project1">Krishna Green Midlake III</Link>        </li>
         <li>
-          <Link to="#">Krishna Green North Star</Link>
-        </li>
+        <Link to="/projects/project2">Krishna Green North Star</Link>        </li>
       </ul>
     </div>
   );

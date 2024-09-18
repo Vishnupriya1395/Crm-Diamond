@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUser } from '@fortawesome/free-solid-svg-icons'; // Import the logout icon
+import { faUser } from '@fortawesome/free-solid-svg-icons';
 import '../styles/Header.css';
 import logo from '../assets/dc.png';
 
 const Header = ({ auth, setAuth }) => {
   const [projectsDropdownOpen, setProjectsDropdownOpen] = useState(false);
   const [managersDropdownOpen, setManagersDropdownOpen] = useState(false);
+  const [showLoginMessage, setShowLoginMessage] = useState(false);
   const navigate = useNavigate();
 
   const toggleDropdown = (setDropdown) => {
@@ -20,10 +21,23 @@ const Header = ({ auth, setAuth }) => {
     navigate('/');
   };
 
+  const handleRestrictedNavigation = (event, path) => {
+    if (!auth) {
+      event.preventDefault();
+      setShowLoginMessage(true);
+      setTimeout(() => setShowLoginMessage(false), 3000);
+    } else {
+      navigate(path);
+    }
+  };
+
   return (
     <header>
       <section className='image'>
-      <img src={logo} alt='logo' height={150} width={110} />
+        <img src={logo} alt='logo' height={150} width={110} />
+        <div className='user-role'>
+          {auth ? (auth === 'admin' ? 'Admin Login' : 'Guest Login') : 'Login'}
+        </div>
       </section>
       <nav>
         <div className="login">
@@ -33,35 +47,41 @@ const Header = ({ auth, setAuth }) => {
             </Link>
           ) : (
             <button onClick={handleLogout}>
-              <FontAwesomeIcon icon={faUser} size="2x" /> {/* Use the logout icon */}
+              <FontAwesomeIcon icon={faUser} size="2x" />
             </button>
           )}
         </div>
         <Link to="/">Home</Link>
 
-        {/* Projects Dropdown (Visible for all users) */}
         <div className="dropdown" onMouseEnter={() => toggleDropdown(setProjectsDropdownOpen)} onMouseLeave={() => toggleDropdown(setProjectsDropdownOpen)}>
           <span className="dropbtn">Projects</span>
           <div className={`dropdown-content ${projectsDropdownOpen ? 'show' : ''}`}>
-            <Link to="/projects/project1">Krishna Green Midlake III</Link>
-            <Link to="/projects/project2">Krishna Green North Star</Link>
+            <Link to="/projects/project1" onClick={(e) => handleRestrictedNavigation(e, '/projects/project1')}>Krishna Green Midlake III</Link>
+            <Link to="/projects/project2" onClick={(e) => handleRestrictedNavigation(e, '/projects/project2')}>Krishna Green North Star</Link>
           </div>
         </div>
 
-        {/* Option Dropdown (Visible only for admin users) */}
         {auth === 'admin' && (
           <div className="dropdown" onMouseEnter={() => toggleDropdown(setManagersDropdownOpen)} onMouseLeave={() => toggleDropdown(setManagersDropdownOpen)}>
             <span className="dropbtn">Option</span>
             <div className={`dropdown-content ${managersDropdownOpen ? 'show' : ''}`}>
-              <Link to="/download">View/Download</Link>
+              <Link to="/download" onClick={(e) => handleRestrictedNavigation(e, '/download')}>View/Download</Link>
             </div>
           </div>
         )}
 
-        <Link to="/document">Documentation</Link>
-        <Link to="/payslipform">PayslipForm</Link>
+        <Link to="/document" onClick={(e) => handleRestrictedNavigation(e, '/document')}>Documentation</Link>
+        <Link to="/payslipform" onClick={(e) => handleRestrictedNavigation(e, '/payslipform')}>PayslipForm</Link>
+        <Link to="/payment-installment" onClick={(e) => handleRestrictedNavigation(e, '/payment-installment')}>Make Payment</Link>
         <Link to="/contact">Contact</Link>
+        
+        
       </nav>
+      {showLoginMessage && (
+        <div className="login-message">
+          To view More Details "Please Login"
+        </div>
+      )}
     </header>
   );
 };
