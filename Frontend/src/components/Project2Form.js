@@ -204,57 +204,64 @@ const Project2Form = () => {
       setError('Please enter a mobile number to fetch data.');
       return;
     }
-
+  
     try {
       const response = await fetch(`http://localhost:5000/api/forms/member/${formData.mobileNumber}`);
+  
       if (!response.ok) {
         throw new Error(`Failed to fetch data: ${response.statusText}`);
       }
-
-      const data = await response.json();
-      if (data && Object.keys(data).length > 0) {
-        const formattedData = {
-          ...formData,
-          ...data,
-          date: data.date ? data.date.substring(0, 10) : '',
-          dateofbirth: data.dateofbirth ? data.dateofbirth.substring(0, 10) : '',
-          firstName: data.firstName || '',
-          lastName: data.lastName || '',
-          emailid: data.emailid || '',
-          address: {
-            flatNumber: data.address.flatNumber || '',
-            streetName: data.address.streetName || '',
-            area: data.address.area || '',
-            city: data.address.city || '',
-            district: data.address.district || '',
-            state: data.address.state || '',
-            postalCode: data.address.postalCode || '',
-            country: data.address.country || 'India',
-          },
-          paymentTypes: data.paymentTypes || [],
-          paidAmounts: data.paidAmounts || [],
-          pendingAmounts: data.pendingAmounts || [],
-          paymentDates: data.paymentDates || [],
-          tids: data.tids || [],
-          bankNames: data.bankNames || [],
-          branches: data.branches || [],
-          commissions: data.commissions || [],
-          paymentPercentages: data.paymentPercentages || [],
-        };
-
-        setFormData(formattedData);
-        setExistingPaidAmount(
-          data.paidAmounts.reduce((sum, amt) => sum + parseFloat(amt.replace(/,/g, '')), 0)
-        );
-        setError('');
+  
+      const contentType = response.headers.get('content-type');
+      if (contentType && contentType.indexOf('application/json') !== -1) {
+        const data = await response.json();
+        if (data && Object.keys(data).length > 0) {
+          const formattedData = {
+            ...formData,
+            ...data,
+            date: data.date ? data.date.substring(0, 10) : '',
+            dateofbirth: data.dateofbirth ? data.dateofbirth.substring(0, 10) : '',
+            firstName: data.firstName || '',
+            lastName: data.lastName || '',
+            emailid: data.emailid || '',
+            address: {
+              flatNumber: data.address.flatNumber || '',
+              streetName: data.address.streetName || '',
+              area: data.address.area || '',
+              city: data.address.city || '',
+              district: data.address.district || '',
+              state: data.address.state || '',
+              postalCode: data.address.postalCode || '',
+              country: data.address.country || 'India',
+            },
+            paymentTypes: data.paymentTypes || [],
+            paidAmounts: data.paidAmounts || [],
+            pendingAmounts: data.pendingAmounts || [],
+            paymentDates: data.paymentDates || [],
+            tids: data.tids || [],
+            bankNames: data.bankNames || [],
+            branches: data.branches || [],
+            commissions: data.commissions || [],
+            paymentPercentages: data.paymentPercentages || [],
+          };
+  
+          setFormData(formattedData);
+          setExistingPaidAmount(
+            data.paidAmounts.reduce((sum, amt) => sum + parseFloat(amt.replace(/,/g, '')), 0)
+          );
+          setError('');
+        } else {
+          setError('No data found for the given mobile number');
+        }
       } else {
-        setError('No data found for the given mobile number');
+        throw new Error('Received non-JSON response from server');
       }
     } catch (error) {
       console.error('Error fetching member data:', error);
       setError('Error fetching member data. Please try again later.');
     }
   };
+  
 
   const handleCustomerSubmit = async (e) => {
     e.preventDefault();

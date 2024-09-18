@@ -36,6 +36,19 @@ router.post('/create/:customerId', async (req, res) => {
   }
 });
 
+router.post('/customer/submit', async (req, res) => {
+  try {
+    const customer = new CustomerDetails(req.body);
+    await customer.save();
+    res.status(201).json({ message: 'Customer created successfully', customer });
+  } catch (error) {
+    console.error('Error creating customer:', error);
+    res.status(500).json({ message: 'Error creating customer', error: error.message });
+  }
+});
+
+module.exports = router;
+
 // Route to get all payments for a specific customer
 router.get('/:customerId', async (req, res) => {
   try {

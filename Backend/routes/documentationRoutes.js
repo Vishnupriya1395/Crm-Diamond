@@ -15,7 +15,7 @@ router.get('/member/:phoneNumber', async (req, res) => {
     if (!formData) {
       return res.status(404).json({ message: 'Member not found' });
     }
-
+    console.log('Member data found:', formData);
     res.json(formData);
   } catch (error) {
     console.error('Error fetching member data:', error);
@@ -32,6 +32,7 @@ router.post(
     { name: 'affidavitFile', maxCount: 1 },
     { name: 'photoFile', maxCount: 1 },
   ]),
+
   async (req, res) => {
     try {
       console.group(req.files);
@@ -40,6 +41,7 @@ router.post(
       const form = await Form.findOne({ seniorityNumber });
 
       if (!form) {
+        console.log('form not found for seniority number:', seniorityNumber);
         return res.status(404).json({ message: 'Form not found' });
       }
 
@@ -59,6 +61,7 @@ router.post(
 
       await form.save();
 
+      console.log('Documents uploaded successfully for seniority number:', seniorityNumber);
       res.status(200).json({ message: 'Documents uploaded successfully', data: form });
     } catch (error) {
       console.error('Error uploading documents:', error);

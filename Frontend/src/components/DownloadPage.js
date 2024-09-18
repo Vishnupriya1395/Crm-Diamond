@@ -12,20 +12,24 @@ const DownloadPage = () => {
   const [matches, setMatches] = useState([]);
   const [currentMatchIndex, setCurrentMatchIndex] = useState(0);
 
-  const fetchData = async (url) => {
+  const fetchData = async () => {
     try {
+      const url = 'http://localhost:5000/api/forms/all';
       const response = await fetch(url);
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
+
       const result = await response.json();
 
       const formattedData = result.map(item => {
-        const { _id, __v, date, dateofbirth, ...rest } = item;
+        const { _id, __v, date, dateofbirth, address, ...rest } = item;
         return {
           ...rest,
           date: formatDate(date),
           dateofbirth: formatDate(dateofbirth),
+          address: formatAddress(address), // Correctly format the address object to a string
         };
       });
 
@@ -42,6 +46,12 @@ const DownloadPage = () => {
     return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
   };
 
+  const formatAddress = (address) => {
+    if (!address || typeof address !== 'object') return ''; // Handle invalid address
+    const { flatNumber, streetName, area, city, district, state, postalCode, country } = address;
+    return `${flatNumber || ''}, ${streetName || ''}, ${area || ''}, ${city || ''}, ${district || ''}, ${state || ''}, ${postalCode || ''}, ${country || ''}`;
+  };
+
   const handleFetchBySeniority = async () => {
     if (seniorityNumber) {
       try {
@@ -51,7 +61,10 @@ const DownloadPage = () => {
         }
         const result = await response.json();
         if (result.length > 0) {
-          setData(result);
+          setData(result.map(item => ({
+            ...item,
+            address: formatAddress(item.address) // Format address before setting data
+          })));
         } else {
           alert('No data found for the entered Seniority Number');
         }
@@ -83,7 +96,7 @@ const DownloadPage = () => {
   };
 
   const handleViewAll = () => {
-    setData(fullData);
+    setData(fullData); // Reset the data to show all entries
   };
 
   const handleSearch = (term) => {
@@ -144,7 +157,6 @@ const DownloadPage = () => {
       regex.test(part) ? <mark key={i}>{part}</mark> : part
     );
   };
-  
 
   const handleFetchMatches = () => {
     if (searchTerm) {
@@ -160,7 +172,6 @@ const DownloadPage = () => {
   };
 
   const handleDownload = () => {
-    // Filter out the fields you don't want to include in the Excel file
     const downloadData = data.map(item => {
       const { _id, __v, aadharFile, pancardFile, affidavitFile, photoFile, ...rest } = item;
       return {
@@ -187,74 +198,66 @@ const DownloadPage = () => {
         branch: item.branch,
         paymentPercentage: item.paymentPercentage,
         commission: item.commission,
-        // Exclude the aadharFile, pancardFile, affidavitFile, and photoFile fields
       };
     });
-  
+
     const worksheet = XLSX.utils.json_to_sheet(downloadData);
 
+    const headerRange = XLSX.utils.decode_range(worksheet['!ref']);
+    for (let C = headerRange.s.c; C <= headerRange.e.c; ++C) {
+      const cellAddress = XLSX.utils.encode_cell({ r: 0, c: C });
+      if (!worksheet[cellAddress]) continue;
 
-  // Apply styles to the header row
-  const headerRange = XLSX.utils.decode_range(worksheet['!ref']);
-  for (let C = headerRange.s.c; C <= headerRange.e.c; ++C) {
-    const cellAddress = XLSX.utils.encode_cell({ r: 0, c: C }); // Header is in row 0
-    if (!worksheet[cellAddress]) continue;
-  
-    // Get the current header value
-    let headerValue = worksheet[cellAddress].v;
-    
-    // Capitalize the first letter of each word in the header
-    headerValue = headerValue.replace(/\b\w/g, char => char.toUpperCase());
-    
-    if(headerValue.toLowerCase() === "tid" )
-      {
-        headerValue="Tid/C.No/D.D";
-      }   // Update the header value with the capitalized version
-    worksheet[cellAddress].v = headerValue;
-  
-    // Apply the bold style and any other styling (alignment, background color, etc.)
-    worksheet[cellAddress].s = {
-      font: { bold: true }, // Make header bold
-      alignment: { horizontal: 'center', vertical: 'center' }, // Center alignment
-      fill: { fgColor: { rgb: "FFFFAA00" } }, // Optional: Background color
-    };
-  }
+      let headerValue = worksheet[cellAddress].v;
 
-  // Adjust column widths
-  worksheet['!cols'] = [
-    { wpx: 120 }, // Project Name
-    { wpx: 60 },  // ID
-    { wpx: 100 }, // Date
-    { wpx: 120 }, // First Name
-    { wpx: 120 }, // Last Name
-    { wpx: 150 }, // Mobile Number
-    { wpx: 180 }, // Alternative Mobile Number
-    { wpx: 100 }, // Date of Birth
-    { wpx: 180 }, // Email ID
-    { wpx: 200 }, // Address
-    { wpx: 100 }, // Manager Name
-    { wpx: 100 }, // Executive Name
-    { wpx: 100 }, // Seniority Number
-    { wpx: 100 }, // Square Feet
-    { wpx: 120 }, // Total Amount
-    { wpx: 120 }, // Payment Type
-    { wpx: 120 }, // Paid Amount
-    { wpx: 120 }, // Pending Amount
-    { wpx: 150 }, // Tid / C.no / DD
-    { wpx: 150 }, // Bank Name
-    { wpx: 150 }, // Branch
-    { wpx: 100 }, // Payment %
-    { wpx: 120 }, // Commission
-  ];
+      headerValue = headerValue.replace(/\b\w/g, char => char.toUpperCase());
+
+      if (headerValue.toLowerCase() === "tid") {
+        headerValue = "Tid/C.No/D.D";
+      }
+
+      worksheet[cellAddress].v = headerValue;
+
+      worksheet[cellAddress].s = {
+        font: { bold: true },
+        alignment: { horizontal: 'center', vertical: 'center' },
+        fill: { fgColor: { rgb: "FFFFAA00" } },
+      };
+    }
+
+    worksheet['!cols'] = [
+      { wpx: 120 },
+      { wpx: 60 },
+      { wpx: 100 },
+      { wpx: 120 },
+      { wpx: 120 },
+      { wpx: 150 },
+      { wpx: 180 },
+      { wpx: 100 },
+      { wpx: 180 },
+      { wpx: 200 },
+      { wpx: 100 },
+      { wpx: 100 },
+      { wpx: 100 },
+      { wpx: 100 },
+      { wpx: 120 },
+      { wpx: 120 },
+      { wpx: 120 },
+      { wpx: 120 },
+      { wpx: 150 },
+      { wpx: 150 },
+      { wpx: 150 },
+      { wpx: 100 },
+      { wpx: 120 },
+    ];
 
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Data');
     XLSX.writeFile(workbook, 'MyExcelFile.xlsx');
   };
-  
 
   useEffect(() => {
-    fetchData('http://localhost:5000/api/forms/all');
+    fetchData();
   }, []);
 
   return (
@@ -309,6 +312,7 @@ const DownloadPage = () => {
         </select>
         <button onClick={handleFetchByExecutive}>Fetch by Executive</button>
       </div>
+
       <section className="download-button">
         <button onClick={handleDownload}>Download Excel</button>
       </section>
@@ -341,7 +345,7 @@ const DownloadPage = () => {
             <th>Alternative Mobile Number</th>
             <th>Date of Birth</th>
             <th>Email ID</th>
-            <th>Address</th>
+            <th>Address</th> {/* Address is now correctly formatted */}
             <th>Manager Name</th>
             <th>Executive Name</th>
             <th>Seniority Number</th>
@@ -373,7 +377,7 @@ const DownloadPage = () => {
               <td>{highlightSearchTerm(item.alternativeMobileNumber)}</td>
               <td>{highlightSearchTerm(item.dateofbirth)}</td>
               <td>{highlightSearchTerm(item.emailid)}</td>
-              <td>{highlightSearchTerm(item.address)}</td>
+              <td>{highlightSearchTerm(item.address)}</td> {/* Render the formatted address */}
               <td>{highlightSearchTerm(item.managerName)}</td>
               <td>{highlightSearchTerm(item.executiveName)}</td>
               <td>{highlightSearchTerm(item.seniorityNumber)}</td>

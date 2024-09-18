@@ -15,6 +15,34 @@ router.post('/submit', async (req, res) => {
   }
 });
 
+// Fetch forms by manager and executive
+router.get('/forms', async (req, res) => {
+  try {
+    const { manager, executive } = req.query;
+    const forms = await Form.find({ managerName: manager, executiveName: executive });
+    res.json(forms);
+  } catch (error) {
+    console.error('Error fetching forms:', error);
+    res.status(500).json({ message: 'Error fetching forms', error: error.message });
+  }
+});
+
+
+// Fetch member data by mobile number
+router.get('/member/:mobileNumber', async (req, res) => {
+  try {
+    const formData = await Form.findOne({ mobileNumber: req.params.mobileNumber });
+    if (!formData) {
+      return res.status(404).json({ message: 'Member not found' });
+    }
+    res.json(formData);
+  } catch (error) {
+    console.error('Error fetching member data:', error);
+    res.status(500).json({ message: 'Error fetching member data', error: error.message });
+  }
+});
+
+
 // Get all forms
 router.get('/all', async (req, res) => {
   try {

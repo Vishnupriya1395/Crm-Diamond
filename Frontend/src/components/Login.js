@@ -11,7 +11,7 @@ const Login = ({ onLogin }) => {
 
   const handleLogin = async () => {
     try {
-      const response = await axios.post('http://localhost:3000/api/auth/login', {
+      const response = await axios.post('http://localhost:5000/api/auth/login', {
         username,
         password,
       });
@@ -30,6 +30,14 @@ const Login = ({ onLogin }) => {
     } catch (error) {
       console.error('Login failed', error);
       alert('Login failed. Please check your credentials.');
+
+      if(error.response && error.response.headers.status === 404)
+      {
+        alert('Server returned an unexpected response. Please check the server logs');
+      }
+      else {
+          alert('Login failed. Please check your credintials');
+      }
     }
   };
 
