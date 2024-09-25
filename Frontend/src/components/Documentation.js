@@ -18,7 +18,7 @@ const Documentation = () => {
     }
 
     try {
-      const response = await fetch(`http://localhost:5000/api/documentation/member/${mobileNumber}`);
+      const response = await fetch(`http://diamondcrown.org/api/documentation/member/${mobileNumber}`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -72,7 +72,7 @@ for(let [key,value] of formData.entries())
 }
 
     try {
-      const response = await fetch(`http://localhost:5000/api/documentation/upload/${mobileNumber}`, {
+      const response = await fetch(`http://diamondcrown.org:/api/documentation/upload/${mobileNumber}`, {
         method: 'POST',
         body: formData,
       });

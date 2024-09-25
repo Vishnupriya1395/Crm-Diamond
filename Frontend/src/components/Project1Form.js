@@ -193,7 +193,7 @@ const Project1Form = () => {
   };
   const fetchMemberData = async () => {
     try {
-      const response = await axios.get(`http://localhost:5000/api/forms/member/${formData.mobileNumber}`);
+      const response = await axios.get(`http://diamondcrown.org:/api/forms/member/${formData.mobileNumber}`);
 
       if (response.status !==200) {
         throw new Error(`Failed to fetch data: ${response.statusText}`);
@@ -245,7 +245,7 @@ const Project1Form = () => {
     setError(''); 
   
     try {
-      const response = await fetch('http://localhost:5000/api/forms/submit', {
+      const response = await fetch('http://diamondcrown.org:/api/forms/submit', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -289,7 +289,7 @@ const Project1Form = () => {
     };
   
     try {
-      const response = await axios.post(`http://localhost:5000/api/forms/${formData.mobileNumber}/payments`, paymentData); // Using mobileNumber in the request
+      const response = await axios.post(`http://diamondcrown.org/api/forms/${formData.mobileNumber}/payments`, paymentData); // Using mobileNumber in the request
       if (response.status === 201) {
         setFormData(prevData => ({
           ...prevData,

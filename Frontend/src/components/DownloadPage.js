@@ -20,7 +20,7 @@ const DownloadPage = () => {
 
   const fetchData = async () => {
     try {
-      const url = 'http://localhost:5000/api/forms/all';
+      const url = 'http://diamondcrown.org:/api/forms/all';
       const response = await fetch(url);
 
       if (!response.ok) {
@@ -69,7 +69,7 @@ const DownloadPage = () => {
   const handleFetchBySeniority = async () => {
     if (seniorityNumber) {
       try {
-        const response = await fetch(`http://localhost:5000/api/forms/seniority/${seniorityNumber}`);
+        const response = await fetch(`http://diamondcrown.org:/api/forms/seniority/${seniorityNumber}`);
   
         if (!response.ok) {
           throw new Error(`Error fetching data: ${response.status} ${response.statusText}`);
@@ -397,7 +397,7 @@ const DownloadPage = () => {
               <td>{highlightSearchTerm(item.totalAmount)}</td>
               <td>
   {item.aadharFile ? (
-    <a href={`http://localhost:5000/api/documentation/file/${item.aadharFile}`} target="_blank" rel="noopener noreferrer">
+    <a href={`http://diamondcrown.org/api/documentation/file/${item.aadharFile}`} target="_blank" rel="noopener noreferrer">
       View Aadhar
     </a>
   ) : (
@@ -406,7 +406,7 @@ const DownloadPage = () => {
 </td>
 <td>
   {item.pancardFile ? (
-    <a href={`http://localhost:5000/api/documentation/file/${item.pancardFile}`} target="_blank" rel="noopener noreferrer">
+    <a href={`http://diamondcrown.org/api/documentation/file/${item.pancardFile}`} target="_blank" rel="noopener noreferrer">
       View Pancard
     </a>
   ) : (
@@ -415,7 +415,7 @@ const DownloadPage = () => {
 </td>
 <td>
   {item.affidavitFile ? (
-    <a href={`http://localhost:5000/api/documentation/file/${item.affidavitFile}`} target="_blank" rel="noopener noreferrer">
+    <a href={`http://diamondcrown.org/api/documentation/file/${item.affidavitFile}`} target="_blank" rel="noopener noreferrer">
       View Affidavit
     </a>
   ) : (
@@ -424,7 +424,7 @@ const DownloadPage = () => {
 </td>
 <td>
   {item.photoFile ? (
-    <a href={`http://localhost:5000/api/documentation/file/${item.photoFile}`} target="_blank" rel="noopener noreferrer">
+    <a href={`http://diamondcrown.org/api/documentation/file/${item.photoFile}`} target="_blank" rel="noopener noreferrer">
       View Photo
     </a>
   ) : (

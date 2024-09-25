@@ -17,7 +17,13 @@ require('dotenv').config();
 
 // CORS configuration
 const corsOption= {
-  origin: 'http://localhost:3000', // Your React app's URL
+  origin: function (origin, callback) {
+    if (['http://localhost:3000', 'http://diamondcrown.org'].indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  }, // Your React app's URL
   credentials: true, // Allow credentials (cookies, authorization headers, etc.)
   methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed methods
   allowedHeaders: ['Content-Type', 'Authorization'], // Allowed headers

@@ -36,7 +36,7 @@ const PaymentInstallmentForm = () => {
 
   const fetchDataByMobileNumber = async (mobileNumber) => {
     try {
-      const response = await axios.get(`http://localhost:5000/api/payments/member/${mobileNumber}`);
+      const response = await axios.get(`http://diamondcrown.org/api/payments/member/${mobileNumber}`);
       if (response.status === 200) {
         const totalPaidAmount = response.data.payments.reduce((total, payment) => total + parseInt(payment.paymentAmount, 10), 0);
         
@@ -128,7 +128,7 @@ const handleAddPayment = async (e) => {
 
   try {
     // POST to add payment to the backend
-    const response = await axios.post(`http://localhost:5000/api/payments/forms/${mobileNumber}/payments`, paymentData);
+    const response = await axios.post(`http://diamondcrown.org/api/payments/forms/${mobileNumber}/payments`, paymentData);
 
     if (response.status === 201) {
       // Append new payment to payments array in formData

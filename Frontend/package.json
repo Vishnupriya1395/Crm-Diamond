@@ -34,7 +34,7 @@
     "raf": "^3.4.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-router-dom": "^6.25.1",
+    "react-router-dom": "^6.26.2",
     "react-scripts": "5.0.1",
     "regenerator-runtime": "^0.14.1",
     "rgbcolor": "^1.0.1",
@@ -43,7 +43,7 @@
     "text-segmentation": "^1.0.3",
     "utrie": "^1.0.2",
     "web-vitals": "^2.1.4",
-    "xlsx": "^0.17.0",
+    "xlsx": "^0.17.5",
     "xslx": "^1.0.0"
   },
   "scripts": {
@@ -66,5 +66,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11"
   }
 }

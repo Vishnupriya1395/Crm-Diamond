@@ -3,7 +3,7 @@ import axios from 'axios';
 
 // Create an instance of Axios
 const axiosInstance = axios.create({
-  baseURL: 'http://localhost:5000/api', // Base URL of your backend API
+  baseURL: 'http://diamondcrown.org/api', // Base URL of your backend API
   headers: {
     'Content-Type': 'application/json',
   },

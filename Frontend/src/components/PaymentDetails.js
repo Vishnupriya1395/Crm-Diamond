@@ -17,7 +17,7 @@ const PaymentDetails = () => {
   useEffect(() => {
     const fetchCustomerData = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/payments/forms/${id}`);
+        const response = await fetch(`http://diamondcrown.org/api/payments/forms/${id}`);
         if (!response.ok) {
           throw new Error(`Error fetching data: ${response.status} ${response.statusText}`);
         }

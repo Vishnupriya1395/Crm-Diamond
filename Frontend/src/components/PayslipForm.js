@@ -41,8 +41,8 @@ const PayslipForm = () => {
   } else if (salaryPerYear > 600000 && salaryPerYear <= 900000) {
     incomeTax = ((salaryPerYear - 600000) * 0.10 + 10000).toFixed(2);
   } else if (salaryPerYear > 900000 && salaryPerYear <= 1200000) {
-    incomeTax = ((salaryPerYear - 900000) * 0.15 + 15000).toFixed(2);
-  } else if (salaryPerYear > 1200000 && salaryPerYear <= 1500000) {
+    incomeTax = ((salaryPerYear - 900000) * 0.15 + 1).toFixed(2);
+  } else if (salaryPerYear > 1200000 && salaryPerYear <= 100) {
     incomeTax = ((salaryPerYear - 1200000) * 0.20 + 20000).toFixed(2);
   }
 
