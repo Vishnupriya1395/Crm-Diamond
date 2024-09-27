@@ -5,7 +5,8 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const http = require('http');
 const WebSocket = require('ws');
-const path = require('path');  // Import path module
+const path = require('path'); 
+const fs = require('fs'); // Import path module
 const formRoutes = require('./routes/formRoutes');
 const authRoutes = require('./routes/authRoutes');
 const paymentRoutes = require('./routes/paymentRoutes');
@@ -15,19 +16,14 @@ require('dotenv').config();
 
 
 
-// CORS configuration
-const corsOption= {
-  origin: function (origin, callback) {
-    if (['http://localhost:3000', 'http://diamondcrown.org'].indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  }, // Your React app's URL
+
+const corsOption = {
+  origin: ['http://localhost:3000', 'http://diamondcrown.org'], // List allowed domains
   credentials: true, // Allow credentials (cookies, authorization headers, etc.)
   methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed methods
   allowedHeaders: ['Content-Type', 'Authorization'], // Allowed headers
 };
+
 
 
 // Connect to MongoDB using the connection string from environment variables
@@ -53,6 +49,17 @@ app.use('/api/auth', authRoutes);
 
 app.get('/test', (req, res) => {
   res.send('Test endpoint is working');
+});
+
+app.get('/sitemap.xml', (req, res) => {
+  const sitemapPath = path.join(__dirname, 'sitemap.xml');
+  fs.readFile(sitemapPath, 'utf8', (err, data) => {
+    if (err) {
+      return res.status(500).send('Error loading sitemap');
+    }
+    res.header('Content-Type', 'application/xml');
+    res.send(data);
+  });
 });
 
 // Serve static files from the React app (build folder)

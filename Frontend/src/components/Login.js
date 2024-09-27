@@ -3,7 +3,6 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import '../styles/login.css';
 
-const API_BASE_URL =  process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000';
 
 const Login = ({ onLogin }) => {
   const [username, setUsername] = useState('');
@@ -13,7 +12,7 @@ const Login = ({ onLogin }) => {
 
   const handleLogin = async () => {
     try {
-      const response = await axios.post(`${API_BASE_URL}/auth/login`, {
+      const response = await axios.post(`/api/auth/login`, {
         username,
         password,
       });
@@ -52,7 +51,7 @@ const Login = ({ onLogin }) => {
         value={username} 
         onChange={(e) => setUsername(e.target.value)} 
       />
-      <label>Password:</label>
+      <label>Passwsddrd:</label>
       <input 
         type={showPassword ? 'text' : 'password'} 
         value={password} 

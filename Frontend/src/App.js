@@ -38,8 +38,7 @@ function App() {
     }
 
     // Optionally, clear the token and auth state on component mount
-    localStorage.removeItem('token');
-    setAuth(null);
+   
   }, []);
 
   return (
